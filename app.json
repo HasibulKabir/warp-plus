@@ -13,11 +13,11 @@
         "WAIT_TIME": {
             "description": "Wait time before sending request.",
             "required": false,
-            "value": 20
+            "value": "20"
         }
     },
     "formation": {
-        "worker": {
+        "web": {
             "quantity": 1,
             "size": "free"
         }
