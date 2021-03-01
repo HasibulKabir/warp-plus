@@ -1,0 +1,30 @@
+{
+    "name": "Warp Plus",
+    "description": "Get Free Premium data using This tool.",
+    "keywords": ["warp", "cloudflare", "1.1.1.1"],
+    "repository": "https://github.com/hasibulkabir/warp-plus",
+    "success_url": "/",
+    "stack": "heroku-20",
+    "env": {
+        "REFERRER_ID": {
+            "description": "Your 1.1.1.1 app referrer Id.",
+            "required": true
+        },
+        "WAIT_TIME": {
+            "description": "Wait time before sending request.",
+            "required": false,
+            "value": 20
+        }
+    },
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ]
+}
