@@ -5,9 +5,12 @@ import string
 import random
 import datetime
 import traceback
+import threading
 import urllib.request
+from flask import Flask, jsonify
 
-config = {"TOTAL": 0}
+app = Flask(__name__)
+app.config['TOTAL'] = 0
 referrerID = os.environ.get("REFERRER_ID")
 
 
@@ -46,8 +49,8 @@ class WarpyAPI:
             response = urllib.request.urlopen(req)
             con = response.read().decode('UTF-8')
             if response.getcode() == 200 and referrerID in con:
-                config['TOTAL'] += 1
-                print('Total: {}GB... Earned 1GB.'.format(config['TOTAL']))
+                app.config['TOTAL'] += 1
+                print('Total: {}GB... Earned 1GB.'.format(app.config['TOTAL']))
 
         except Exception:
             traceback.print_exc()
@@ -58,5 +61,20 @@ class WarpyAPI:
             time.sleep(int(os.environ.get("WAIT_TIME", 20)))
 
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify(
+        {
+            "status": "ok",
+            "sended": app.config['TOTAL']
+        }
+    )
+
+thread = threading.Thread(target=WarpyAPI().start, daemon=True)
+thread.start()
+
 if __name__ == '__main__':
-    WarpyAPI().start()
+    app.run(
+        host=os.environ.get("HOST", "0.0.0.0"),
+        port=os.environ.get("PORT", 5000)
+    )
