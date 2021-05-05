@@ -7,6 +7,7 @@ import datetime
 import traceback
 import threading
 import urllib.request
+from urllib.parse import parse_qs, urlparse
 from flask import Flask, jsonify
 
 app = Flask(__name__)
@@ -14,7 +15,15 @@ app.config['TOTAL'] = 0
 referrerID = os.environ.get("REFERRER_ID")
 
 
+class RedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **kw):
+        return
+
+
 class WarpyAPI:
+    def __init__(self) -> None:
+        self.referrerID = referrerID or self.get_refferID()
+
     @staticmethod
     def __gen_random_string(n):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
@@ -22,6 +31,13 @@ class WarpyAPI:
     @property
     def api_url(self):
         return 'https://api.cloudflareclient.com/v0a{}/reg'.format(random.randint(100, 999))
+
+    def get_refferID(self) -> str:
+        opener = urllib.request.build_opener(RedirectHandler)
+        urllib.request.install_opener(opener)
+        resp = urllib.request.urlopen(os.environ.get("REFERRER_URL"))
+        url = resp.headers.get("location")
+        return parse_qs(urlparse(url).query)['referrer'][0]
 
     def get_data(self):
         install_id = self.__gen_random_string(11)

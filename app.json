@@ -7,8 +7,12 @@
     "stack": "heroku-20",
     "env": {
         "REFERRER_ID": {
-            "description": "Your 1.1.1.1 app referrer Id.",
-            "required": true
+            "description": "Your 1.1.1.1 app referrer Id. Leave it blank if you don't Know about it.",
+            "required": false
+        },
+        "REFERRER_URL": {
+            "description": "Paste Your Referrer link.",
+            "required": false
         },
         "WAIT_TIME": {
             "description": "Wait time before sending request.",
