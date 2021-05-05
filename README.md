@@ -23,7 +23,7 @@
 ## Prerequisites
 
 - Heroku account / Personal VPS
-- Warp Reffeal Link
+- Warp Plus Referral Link
 
 ## Heroku <a name = "heroku"></a>
 
