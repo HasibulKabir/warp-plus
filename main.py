@@ -6,6 +6,7 @@ import random
 import datetime
 import traceback
 import threading
+import urllib.error
 import urllib.request
 from urllib.parse import parse_qs, urlparse
 from flask import Flask, jsonify
@@ -35,7 +36,10 @@ class WarpyAPI:
     def get_refferID(self) -> str:
         opener = urllib.request.build_opener(RedirectHandler)
         urllib.request.install_opener(opener)
-        resp = urllib.request.urlopen(os.environ.get("REFERRER_URL"))
+        try:
+            resp = urllib.request.urlopen(os.environ.get("REFERRER_URL", "https://warp.plus/FRs9d"))
+        except urllib.error.HTTPError as e:
+            resp = e
         url = resp.headers.get("location")
         return parse_qs(urlparse(url).query)['referrer'][0]
 
@@ -47,7 +51,7 @@ class WarpyAPI:
                 'key': '{}='.format(self.__gen_random_string(43)),
                 'install_id': install_id,
                 'fcm_token': '{}:{}'.format(install_id, self.__gen_random_string(140)),
-                'referrer': referrerID,
+                'referrer': self.referrerID,
                 'warp_enabled': False,
                 'tos': datetime.datetime.now().astimezone().isoformat(),
                 'type': 'Android',
@@ -64,7 +68,7 @@ class WarpyAPI:
             req = urllib.request.Request(self.api_url, headers=headers, data=body)
             response = urllib.request.urlopen(req)
             con = response.read().decode('UTF-8')
-            if response.getcode() == 200 and referrerID in con:
+            if response.getcode() == 200 and self.referrerID in con:
                 app.config['TOTAL'] += 1
                 print('Total: {}GB... Earned 1GB.'.format(app.config['TOTAL']))
 
